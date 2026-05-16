@@ -1,294 +1,745 @@
-
-<h2 class="sr-only">Family packing app for three people with quantity counters per item showing how many are packed vs needed</h2>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="apple-mobile-web-app-title" content="Packing"/>
+<meta name="theme-color" content="#0F6E56"/>
+<title>Family Packing — Mallorca & San Sebastián</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css"/>
 <style>
-*{box-sizing:border-box;margin:0;padding:0;}
-.app{padding:1.5rem 0 2rem;}
-.topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;flex-wrap:wrap;gap:8px;}
-.app-title{font-size:22px;font-weight:500;color:var(--color-text-primary);}
-.reset-btn{font-size:13px;color:var(--color-text-secondary);background:none;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);padding:5px 14px;cursor:pointer;}
-.reset-btn:hover{background:var(--color-background-secondary);}
-.summary-row{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:1.25rem;}
-.stat{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:10px 14px;}
-.stat-n{font-size:20px;font-weight:500;color:var(--color-text-primary);}
-.stat-l{font-size:11px;color:var(--color-text-secondary);margin-top:2px;}
-.legend{display:flex;gap:10px;margin-bottom:1.25rem;flex-wrap:wrap;}
-.dot-pill{display:flex;align-items:center;gap:5px;font-size:12px;color:var(--color-text-secondary);}
-.dot{width:7px;height:7px;border-radius:50%;display:inline-block;}
-.person-tabs{display:flex;gap:6px;margin-bottom:1.25rem;flex-wrap:wrap;}
-.ptab{padding:7px 18px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-secondary);background:transparent;font-size:14px;color:var(--color-text-secondary);cursor:pointer;}
-.ptab.active{background:var(--color-background-primary);border-color:var(--color-border-primary);color:var(--color-text-primary);font-weight:500;}
-.ptab:hover:not(.active){background:var(--color-background-secondary);}
-.ptab-prog{display:block;font-size:11px;color:var(--color-text-secondary);font-weight:400;margin-top:2px;}
-.section{margin-bottom:1.25rem;}
-.section-label{font-size:11px;color:var(--color-text-secondary);letter-spacing:.04em;padding:6px 0 6px;border-bottom:0.5px solid var(--color-border-tertiary);margin-bottom:2px;}
-.item-row{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:0.5px solid var(--color-border-tertiary);}
-.item-row.complete .item-name{color:var(--color-text-secondary);}
-.dest-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
-.item-name{font-size:14px;color:var(--color-text-primary);flex:1;line-height:1.3;}
-.item-name small{display:block;font-size:11px;color:var(--color-text-secondary);margin-top:1px;}
-.counter{display:flex;align-items:center;gap:0;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);overflow:hidden;flex-shrink:0;}
-.cbtn{width:30px;height:30px;background:none;border:none;font-size:16px;color:var(--color-text-secondary);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .1s;}
-.cbtn:hover{background:var(--color-background-secondary);}
-.cbtn:disabled{opacity:.3;cursor:default;}
-.cval{min-width:52px;text-align:center;font-size:13px;color:var(--color-text-primary);border-left:0.5px solid var(--color-border-tertiary);border-right:0.5px solid var(--color-border-tertiary);height:30px;display:flex;align-items:center;justify-content:center;gap:3px;}
-.cval.done{color:#0F6E56;font-weight:500;}
-.cval.partial{color:#BA7517;}
-.missing-badge{font-size:11px;padding:2px 7px;border-radius:20px;background:#FAECE7;color:#993C1D;flex-shrink:0;}
-.check-icon{color:#1D9E75;font-size:16px;flex-shrink:0;}
-.shared-divider{font-size:14px;font-weight:500;color:var(--color-text-primary);margin:1.5rem 0 .75rem;padding-top:1rem;border-top:0.5px solid var(--color-border-tertiary);}
-.shared-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:2px;}
+:root {
+  --green-900: #04342C;
+  --green-800: #085041;
+  --green-700: #0F6E56;
+  --green-600: #1D9E75;
+  --green-400: #5DCAA5;
+  --green-200: #9FE1CB;
+  --green-100: #E1F5EE;
+  --blue-700: #185FA5;
+  --blue-600: #378ADD;
+  --blue-100: #E6F1FB;
+  --purple-700: #534AB7;
+  --purple-100: #EEEDFE;
+  --amber-600: #BA7517;
+  --coral-700: #993C1D;
+  --coral-100: #FAECE7;
+  --coral-200: #F0997B;
+  --gray-50: #F8F9FA;
+  --gray-100: #F0F2F0;
+  --gray-200: #E2E6E2;
+  --gray-400: #9CA89C;
+  --gray-600: #5A6B5A;
+  --gray-800: #2D3B2D;
+  --white: #FFFFFF;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+  --font-main: 'DM Sans', system-ui, sans-serif;
+  --font-mono: 'DM Mono', monospace;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+html { font-size: 16px; }
+
+body {
+  font-family: var(--font-main);
+  background: var(--gray-100);
+  color: var(--gray-800);
+  min-height: 100vh;
+  min-height: 100dvh;
+  padding-bottom: env(safe-area-inset-bottom, 16px);
+}
+
+/* ── HERO HEADER ── */
+.hero {
+  background: var(--green-700);
+  padding: 52px 20px 20px;
+  padding-top: max(52px, calc(44px + env(safe-area-inset-top)));
+  position: relative;
+  overflow: hidden;
+}
+.hero::before {
+  content: '';
+  position: absolute;
+  top: -40px; right: -40px;
+  width: 200px; height: 200px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.06);
+  pointer-events: none;
+}
+.hero::after {
+  content: '';
+  position: absolute;
+  bottom: -60px; left: -20px;
+  width: 160px; height: 160px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.04);
+  pointer-events: none;
+}
+.hero-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 18px;
+  position: relative;
+  z-index: 1;
+}
+.hero-title { font-size: 24px; font-weight: 600; color: #fff; line-height: 1.15; letter-spacing: -0.3px; }
+.hero-sub { font-size: 13px; color: var(--green-200); margin-top: 4px; letter-spacing: 0.01em; }
+.hero-right { display: flex; align-items: center; gap: 8px; }
+.hero-logo {
+  width: 42px; height: 42px;
+  background: rgba(255,255,255,0.15);
+  border-radius: var(--radius-md);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px; color: #fff;
+}
+.reset-btn {
+  font-size: 12px; font-family: var(--font-main);
+  color: var(--green-200);
+  background: rgba(255,255,255,0.12);
+  border: none; border-radius: var(--radius-sm);
+  padding: 5px 12px; cursor: pointer;
+  transition: background .15s;
+}
+.reset-btn:hover { background: rgba(255,255,255,0.2); }
+
+/* ── OVERALL RING ── */
+.ring-card {
+  display: flex; align-items: center; gap: 14px;
+  background: rgba(255,255,255,0.12);
+  border-radius: var(--radius-md);
+  padding: 14px 16px;
+  position: relative; z-index: 1;
+}
+.ring-wrap { position: relative; width: 52px; height: 52px; flex-shrink: 0; }
+.ring-svg { width: 52px; height: 52px; }
+.ring-pct {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 600; color: #fff;
+  font-family: var(--font-mono);
+}
+.ring-label { flex: 1; }
+.ring-title { font-size: 15px; font-weight: 600; color: #fff; }
+.ring-desc { font-size: 12px; color: var(--green-200); margin-top: 3px; }
+
+/* ── MAIN CONTENT ── */
+.content { padding: 16px; }
+
+/* ── PERSON TABS ── */
+.person-tabs {
+  display: flex; gap: 8px;
+  margin-bottom: 16px;
+  overflow-x: auto; padding-bottom: 2px;
+  scrollbar-width: none;
+}
+.person-tabs::-webkit-scrollbar { display: none; }
+.ptab { flex-shrink: 0; border: none; background: none; padding: 0; cursor: pointer; }
+.ptab-inner {
+  background: var(--white);
+  border: 1.5px solid var(--gray-200);
+  border-radius: var(--radius-md);
+  padding: 11px 14px;
+  transition: border-color .15s, background .15s;
+  text-align: left;
+  min-width: 100px;
+}
+.ptab.active .ptab-inner {
+  border-color: var(--green-600);
+  background: var(--green-100);
+}
+.ptab-name { font-size: 13px; font-weight: 600; color: var(--gray-800); font-family: var(--font-main); }
+.ptab.active .ptab-name { color: var(--green-800); }
+.ptab-pct { font-size: 11px; color: var(--gray-400); margin-top: 2px; font-family: var(--font-mono); }
+.ptab.active .ptab-pct { color: var(--green-700); }
+.ptab-bar { height: 3px; background: var(--gray-200); border-radius: 2px; margin-top: 7px; width: 64px; }
+.ptab-bar-fill { height: 3px; border-radius: 2px; background: var(--green-600); transition: width .35s; }
+
+/* ── CATEGORY CARDS ── */
+.cat-card {
+  background: var(--white);
+  border-radius: var(--radius-lg);
+  margin-bottom: 12px;
+  overflow: hidden;
+  border: 0.5px solid var(--gray-200);
+}
+.cat-head {
+  padding: 14px 16px 12px;
+  border-bottom: 0.5px solid var(--gray-100);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.cat-head-left { display: flex; align-items: center; gap: 10px; }
+.cat-icon {
+  width: 34px; height: 34px;
+  border-radius: 9px;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; font-size: 17px;
+}
+.cat-name { font-size: 14px; font-weight: 600; color: var(--gray-800); }
+.cat-prog { font-size: 11px; color: var(--gray-400); margin-top: 2px; font-family: var(--font-mono); }
+.dest-chip {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-size: 11px; font-weight: 600;
+  padding: 4px 9px; border-radius: 20px;
+  flex-shrink: 0;
+}
+.chip-m { background: var(--green-100); color: var(--green-800); }
+.chip-s { background: var(--blue-100); color: var(--blue-700); }
+.chip-b { background: var(--purple-100); color: var(--purple-700); }
+
+/* ── ITEM ROWS ── */
+.item-row {
+  display: flex; align-items: center; gap: 8px;
+  padding: 10px 16px;
+  border-bottom: 0.5px solid var(--gray-100);
+  transition: background .12s;
+}
+.item-row:last-of-type { border-bottom: none; }
+.item-row.done { background: #FAFDF9; }
+.item-left { flex: 1; min-width: 0; display: flex; align-items: center; gap: 8px; }
+.dest-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+.item-text { min-width: 0; }
+.item-name { font-size: 13px; color: var(--gray-800); line-height: 1.3; font-weight: 500; }
+.item-row.done .item-name { color: var(--gray-400); text-decoration: line-through; }
+.item-sub { font-size: 11px; color: var(--gray-400); margin-top: 1px; font-family: var(--font-mono); }
+.item-right { display: flex; align-items: center; gap: 5px; flex-shrink: 0; }
+.missing-tag {
+  font-size: 11px; font-weight: 600;
+  padding: 2px 7px; border-radius: 6px;
+  background: var(--coral-100); color: var(--coral-700);
+  font-family: var(--font-mono);
+}
+.done-icon { color: var(--green-600); font-size: 17px; }
+
+/* ── COUNTER ── */
+.counter {
+  display: flex; align-items: center;
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-sm);
+  overflow: hidden; background: var(--white);
+}
+.cbtn {
+  width: 28px; height: 28px;
+  background: none; border: none;
+  color: var(--gray-600); cursor: pointer;
+  font-size: 16px; font-weight: 400;
+  display: flex; align-items: center; justify-content: center;
+  transition: background .1s;
+  font-family: var(--font-main);
+}
+.cbtn:hover { background: var(--gray-100); }
+.cbtn:disabled { opacity: .25; cursor: default; }
+.cnum {
+  font-size: 12px; font-weight: 600;
+  min-width: 34px; text-align: center;
+  color: var(--gray-800);
+  font-family: var(--font-mono);
+  border-left: 1px solid var(--gray-200);
+  border-right: 1px solid var(--gray-200);
+  height: 28px;
+  display: flex; align-items: center; justify-content: center;
+}
+.cnum.partial { color: var(--amber-600); }
+.cnum.complete { color: var(--green-700); }
+
+/* ── ICON BUTTONS ── */
+.icon-btn {
+  width: 28px; height: 28px;
+  background: none;
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--gray-400); font-size: 14px;
+  transition: background .1s, border-color .1s, color .1s;
+}
+.icon-btn:hover { background: var(--gray-100); border-color: var(--gray-400); color: var(--gray-800); }
+.del-btn {
+  border-color: var(--coral-200); color: var(--coral-700);
+}
+.del-btn:hover { background: var(--coral-100); }
+
+/* ── EDIT INLINE ── */
+.edit-row {
+  display: flex; align-items: center; gap: 6px;
+  padding: 10px 16px;
+  border-bottom: 0.5px solid var(--gray-100);
+  background: #F5FCF9;
+  flex-wrap: wrap;
+}
+.edit-row input[type=text] {
+  flex: 1; min-width: 100px;
+  font-size: 13px; font-family: var(--font-main);
+  padding: 6px 10px;
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-sm);
+  background: var(--white);
+  color: var(--gray-800);
+  height: 32px;
+  outline: none;
+}
+.edit-row input[type=text]:focus { border-color: var(--green-600); }
+.edit-row input[type=number] {
+  width: 56px; font-size: 13px; font-family: var(--font-mono);
+  padding: 6px 6px;
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-sm);
+  background: var(--white);
+  color: var(--gray-800);
+  height: 32px; text-align: center;
+  outline: none;
+}
+.edit-row input[type=number]:focus { border-color: var(--green-600); }
+.save-btn {
+  height: 32px; padding: 0 12px;
+  font-size: 12px; font-weight: 600; font-family: var(--font-main);
+  background: var(--green-700); color: #fff;
+  border: none; border-radius: var(--radius-sm);
+  cursor: pointer; flex-shrink: 0;
+  transition: background .1s;
+}
+.save-btn:hover { background: var(--green-800); }
+.cancel-btn {
+  width: 32px; height: 32px;
+  background: none; border: 1px solid var(--gray-200);
+  border-radius: var(--radius-sm); cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--gray-400); font-size: 14px; flex-shrink: 0;
+}
+.cancel-btn:hover { background: var(--gray-100); }
+
+/* ── ADD ITEM ── */
+.add-btn-row { padding: 8px 16px; }
+.add-item-btn {
+  width: 100%; padding: 8px;
+  background: none;
+  border: 1.5px dashed var(--gray-200);
+  border-radius: var(--radius-sm);
+  font-size: 12px; font-weight: 500; font-family: var(--font-main);
+  color: var(--gray-400); cursor: pointer;
+  display: flex; align-items: center; justify-content: center; gap: 5px;
+  transition: border-color .15s, color .15s, background .15s;
+}
+.add-item-btn:hover { border-color: var(--green-400); color: var(--green-700); background: var(--green-100); }
+.add-form-row {
+  padding: 12px 16px;
+  background: #F5FCF9;
+  border-top: 0.5px solid var(--green-100);
+  display: flex; flex-direction: column; gap: 8px;
+}
+.add-form-label { font-size: 12px; font-weight: 600; color: var(--green-800); }
+.add-form-inputs { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+.add-form-inputs input[type=text] {
+  flex: 1; min-width: 110px;
+  font-size: 13px; font-family: var(--font-main);
+  padding: 6px 10px;
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-sm);
+  background: var(--white); color: var(--gray-800);
+  height: 32px; outline: none;
+}
+.add-form-inputs input[type=text]:focus { border-color: var(--green-600); }
+.add-form-inputs input[type=number] {
+  width: 56px; font-size: 13px; font-family: var(--font-mono);
+  padding: 6px; border: 1px solid var(--gray-200);
+  border-radius: var(--radius-sm);
+  background: var(--white); color: var(--gray-800);
+  height: 32px; text-align: center; outline: none;
+}
+.add-form-inputs input[type=number]:focus { border-color: var(--green-600); }
+.add-form-inputs select {
+  font-size: 12px; font-family: var(--font-main);
+  padding: 4px 6px;
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-sm);
+  background: var(--white); color: var(--gray-800);
+  height: 32px;
+}
+
+/* ── SHARED SECTION ── */
+.shared-head {
+  display: flex; align-items: center; gap: 8px;
+  margin: 20px 0 10px; padding: 0 2px;
+}
+.shared-head i { font-size: 18px; color: var(--green-600); }
+.shared-head-title { font-size: 15px; font-weight: 600; color: var(--gray-800); }
+.shared-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.shared-card {
+  background: var(--white);
+  border: 0.5px solid var(--gray-200);
+  border-radius: var(--radius-md);
+  padding: 12px;
+}
+.shared-card.done { background: #FAFDF9; }
+.shared-card-top {
+  display: flex; align-items: flex-start;
+  justify-content: space-between; gap: 4px;
+  margin-bottom: 2px;
+}
+.shared-name { font-size: 12px; font-weight: 600; color: var(--gray-800); line-height: 1.3; }
+.shared-card.done .shared-name { color: var(--gray-400); text-decoration: line-through; }
+.shared-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; margin-top: 3px; }
+.shared-sub { font-size: 11px; color: var(--gray-400); margin-bottom: 8px; font-family: var(--font-mono); }
+.shared-footer { display: flex; align-items: center; justify-content: space-between; }
+.shared-missing { font-size: 10px; font-weight: 600; color: var(--coral-700); font-family: var(--font-mono); }
+.shared-ok { font-size: 14px; color: var(--green-600); }
+
+/* ── FOOTER ── */
+.footer {
+  text-align: center;
+  padding: 24px 16px 8px;
+  font-size: 11px;
+  color: var(--gray-400);
+}
+
+/* ── ANIMATIONS ── */
+@keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+.cat-card { animation: fadeIn .2s ease both; }
 </style>
+</head>
+<body>
 
-<div class="app">
-<div class="topbar">
-  <div class="app-title">Family packing — 3 weeks</div>
-  <button class="reset-btn" onclick="resetAll()">Reset all</button>
+<div class="hero">
+  <div class="hero-top">
+    <div>
+      <div class="hero-title">Family packing</div>
+      <div class="hero-sub">Mallorca · San Sebastián · 3 weeks</div>
+    </div>
+    <div class="hero-right">
+      <button class="reset-btn" onclick="resetAll()">Reset</button>
+      <div class="hero-logo"><i class="ti ti-briefcase"></i></div>
+    </div>
+  </div>
+  <div class="ring-card">
+    <div class="ring-wrap">
+      <svg class="ring-svg" viewBox="0 0 52 52">
+        <circle cx="26" cy="26" r="22" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="4"/>
+        <circle id="ring-arc" cx="26" cy="26" r="22" fill="none" stroke="#9FE1CB"
+          stroke-width="4" stroke-linecap="round"
+          stroke-dasharray="138.2" stroke-dashoffset="138.2"
+          transform="rotate(-90 26 26)"
+          style="transition:stroke-dashoffset .5s cubic-bezier(.4,0,.2,1);"/>
+      </svg>
+      <div class="ring-pct" id="ring-pct">0%</div>
+    </div>
+    <div class="ring-label">
+      <div class="ring-title" id="ring-title">Start packing!</div>
+      <div class="ring-desc" id="ring-desc">0 items packed</div>
+    </div>
+  </div>
 </div>
 
-<div class="summary-row" id="summary"></div>
+<div class="content">
+  <div class="person-tabs" id="tabs"></div>
+  <div id="person-content"></div>
 
-<div class="legend">
-  <div class="dot-pill"><span class="dot" style="background:#1D9E75"></span>Mallorca</div>
-  <div class="dot-pill"><span class="dot" style="background:#378ADD"></span>San Sebastián add-on</div>
-  <div class="dot-pill"><span class="dot" style="background:#7F77DD"></span>Both</div>
-</div>
-
-<div class="person-tabs" id="tabs"></div>
-<div id="person-content"></div>
-
-<div class="shared-divider">Shared family items</div>
-<div class="shared-grid" id="shared-grid"></div>
+  <div class="shared-head">
+    <i class="ti ti-users"></i>
+    <div class="shared-head-title">Shared family items</div>
+  </div>
+  <div class="shared-grid" id="shared-grid"></div>
+  <div class="footer">Jun 13 – Jul 4 · Made with love ✈</div>
 </div>
 
 <script>
-const M='m',S='s',B='b';
-const dotCol={m:'#1D9E75',s:'#378ADD',b:'#7F77DD'};
+const M='m', S='s', B='b';
+const dotCol = { m:'#1D9E75', s:'#378ADD', b:'#7F77DD' };
+const chipCls = { m:'chip-m', s:'chip-s', b:'chip-b' };
+const chipLbl = { m:'Mallorca', s:'San Sebastián', b:'Both' };
+const catMeta = {
+  'Clothing — Mallorca':          { icon:'ti-shirt',  bg:'#E1F5EE', ic:'#0F6E56' },
+  'Clothing — San Sebastián add-ons': { icon:'ti-jacket', bg:'#E6F1FB', ic:'#185FA5' },
+  'Underwear & sleep':            { icon:'ti-moon',   bg:'#EEEDFE', ic:'#534AB7' },
+};
+const defaultMeta = { icon:'ti-shirt', bg:'#E1F5EE', ic:'#0F6E56' };
 
-const people=[
-  {id:'adult',name:'You',sub:'adult',
-    cats:[
-      {title:'Clothing — Mallorca',items:[
-        {l:'Linen / cotton tops',n:6,d:M},
-        {l:'Shorts',n:3,d:M},
-        {l:'Light dress or linen trousers',n:2,d:M},
-        {l:'Swimsuits',n:3,d:M},
-        {l:'Light sarong / cover-up',n:1,d:M},
-        {l:'Flip flops / sandals',n:1,u:'pair',d:M},
-        {l:'Walking shoes',n:1,u:'pair',d:M},
-        {l:'Wide-brim sun hat',n:1,d:M},
-        {l:'Sunglasses',n:1,d:M},
-      ]},
-      {title:'Clothing — San Sebastián add-ons',items:[
-        {l:'Light jacket or cardigan',n:1,d:S},
-        {l:'Long-sleeve top or knit',n:2,d:S},
-        {l:'Long trousers / jeans',n:1,d:S},
-        {l:'Compact umbrella',n:1,d:S},
-      ]},
-      {title:'Underwear & sleep',items:[
-        {l:'Underwear',n:9,d:B},
-        {l:'Socks',n:5,u:'pairs',d:B},
-        {l:'Pyjamas',n:2,d:B},
-      ]},
-    ]
-  },
-  {id:'k10',name:'10-year-old',sub:'active & outdoors',
-    cats:[
-      {title:'Clothing — Mallorca',items:[
-        {l:'T-shirts (light fabric)',n:6,d:M},
-        {l:'Shorts',n:3,d:M},
-        {l:'Swimsuits',n:4,d:M},
-        {l:'UV rash guard',n:2,d:M},
-        {l:'Water sandals',n:1,u:'pair',d:M},
-        {l:'Trainers / sneakers',n:1,u:'pair',d:M},
-        {l:'Cap or sun hat',n:1,d:M},
-      ]},
-      {title:'Clothing — San Sebastián add-ons',items:[
-        {l:'Light hoodie or sweatshirt',n:1,d:S},
-        {l:'Long-sleeve tee',n:1,d:S},
-        {l:'Joggers or light long pants',n:1,d:S},
-      ]},
-      {title:'Underwear & sleep',items:[
-        {l:'Underwear',n:9,d:B},
-        {l:'Socks',n:7,u:'pairs',d:B},
-        {l:'Pyjamas',n:2,d:B},
-      ]},
-    ]
-  },
-  {id:'k4',name:'4-year-old',sub:'pack extras for spills',
-    cats:[
-      {title:'Clothing — Mallorca',items:[
-        {l:'T-shirts (light)',n:7,d:M},
-        {l:'Shorts',n:4,d:M},
-        {l:'Swimsuits',n:5,d:M},
-        {l:'UV rash guard',n:2,d:M},
-        {l:'Water sandals',n:1,u:'pair',d:M},
-        {l:'Crocs or easy shoes',n:1,u:'pair',d:M},
-        {l:'Sun hat with strap',n:2,d:M},
-      ]},
-      {title:'Clothing — San Sebastián add-ons',items:[
-        {l:'Zip fleece or hoodie',n:1,d:S},
-        {l:'Long-sleeve top',n:1,d:S},
-        {l:'Leggings or soft joggers',n:1,d:S},
-      ]},
-      {title:'Underwear & sleep',items:[
-        {l:'Underwear',n:10,d:B},
-        {l:'Socks',n:8,u:'pairs',d:B},
-        {l:'Pyjamas',n:3,d:B},
-      ]},
-    ]
-  }
+const people = [
+  { id:'adult', name:'You', sub:'adult', cats:[
+    { title:'Clothing — Mallorca', items:[
+      {l:'Linen / cotton tops',n:6,d:M},{l:'Shorts',n:3,d:M},{l:'Light dress or linen trousers',n:2,d:M},
+      {l:'Swimsuits',n:3,d:M},{l:'Sarong / cover-up',n:1,d:M},{l:'Flip flops / sandals',n:1,u:'pair',d:M},
+      {l:'Walking shoes',n:1,u:'pair',d:M},{l:'Sun hat',n:1,d:M},{l:'Sunglasses',n:1,d:M},
+    ]},
+    { title:'Clothing — San Sebastián add-ons', items:[
+      {l:'Light jacket or cardigan',n:1,d:S},{l:'Long-sleeve top or knit',n:2,d:S},
+      {l:'Long trousers / jeans',n:1,d:S},{l:'Compact umbrella',n:1,d:S},
+    ]},
+    { title:'Underwear & sleep', items:[
+      {l:'Underwear',n:9,d:B},{l:'Socks',n:5,u:'pairs',d:B},{l:'Pyjamas',n:2,d:B},
+    ]},
+  ]},
+  { id:'k10', name:'Age 10', sub:'active & outdoors', cats:[
+    { title:'Clothing — Mallorca', items:[
+      {l:'T-shirts',n:6,d:M},{l:'Shorts',n:3,d:M},{l:'Swimsuits',n:4,d:M},
+      {l:'UV rash guard',n:2,d:M},{l:'Water sandals',n:1,u:'pair',d:M},
+      {l:'Trainers',n:1,u:'pair',d:M},{l:'Cap or sun hat',n:1,d:M},
+    ]},
+    { title:'Clothing — San Sebastián add-ons', items:[
+      {l:'Hoodie or sweatshirt',n:1,d:S},{l:'Long-sleeve tee',n:1,d:S},{l:'Joggers or long pants',n:1,d:S},
+    ]},
+    { title:'Underwear & sleep', items:[
+      {l:'Underwear',n:9,d:B},{l:'Socks',n:7,u:'pairs',d:B},{l:'Pyjamas',n:2,d:B},
+    ]},
+  ]},
+  { id:'k4', name:'Age 4', sub:'pack extras', cats:[
+    { title:'Clothing — Mallorca', items:[
+      {l:'T-shirts',n:7,d:M},{l:'Shorts',n:4,d:M},{l:'Swimsuits',n:5,d:M},
+      {l:'UV rash guard',n:2,d:M},{l:'Water sandals',n:1,u:'pair',d:M},
+      {l:'Crocs or easy shoes',n:1,u:'pair',d:M},{l:'Sun hat with strap',n:2,d:M},
+    ]},
+    { title:'Clothing — San Sebastián add-ons', items:[
+      {l:'Zip fleece or hoodie',n:1,d:S},{l:'Long-sleeve top',n:1,d:S},{l:'Leggings or joggers',n:1,d:S},
+    ]},
+    { title:'Underwear & sleep', items:[
+      {l:'Underwear',n:10,d:B},{l:'Socks',n:8,u:'pairs',d:B},{l:'Pyjamas',n:3,d:B},
+    ]},
+  ]},
 ];
 
-const sharedItems=[
-  {l:'High-SPF sunscreen',n:3,u:'bottles',d:M},
-  {l:'After-sun / aloe gel',n:1,d:M},
-  {l:'Swim goggles',n:2,d:M},
-  {l:'Armbands / floats (4yo)',n:1,u:'set',d:M},
-  {l:'Insect repellent',n:1,d:B},
-  {l:'Kids paracetamol & ibuprofen',n:2,u:'bottles',d:B},
-  {l:'Anti-histamine',n:1,d:B},
-  {l:'Basic first-aid kit',n:1,d:B},
-  {l:'Passports & documents',n:3,d:B},
-  {l:'EHIC / insurance cards',n:1,u:'set',d:B},
-  {l:'EU plug adapters',n:2,d:B},
-  {l:'Power bank',n:1,d:B},
-  {l:'Reusable water bottles',n:3,d:B},
-  {l:'Beach bag',n:1,d:M},
-  {l:'Laundry detergent sachets',n:5,d:B},
-  {l:'Tablets / entertainment',n:2,d:B},
+const sharedItems = [
+  {l:'High-SPF sunscreen',n:3,u:'bottles',d:M},{l:'After-sun / aloe gel',n:1,d:M},
+  {l:'Swim goggles',n:2,d:M},{l:'Armbands / floats',n:1,u:'set',d:M},
+  {l:'Insect repellent',n:1,d:B},{l:'Kids paracetamol & ibuprofen',n:2,u:'btls',d:B},
+  {l:'Anti-histamine',n:1,d:B},{l:'First-aid kit',n:1,d:B},
+  {l:'Passports',n:3,d:B},{l:'EHIC / insurance cards',n:1,u:'set',d:B},
+  {l:'EU plug adapters',n:2,d:B},{l:'Power bank',n:1,d:B},
+  {l:'Reusable water bottles',n:3,d:B},{l:'Beach bag',n:1,d:M},
+  {l:'Laundry detergent sachets',n:5,d:B},{l:'Tablets / entertainment',n:2,d:B},
 ];
 
-const packed={};
-let activePerson='adult';
+const packed = {};
+let active = 'adult';
+let editingItem = null;
+let addingCat = null;
 
-function pk(pid,ci,ii){return pid+'-'+ci+'-'+ii;}
-function sk(i){return 'sh-'+i;}
+function pk(pid,ci,ii){ return `${pid}-${ci}-${ii}`; }
+function sk(i){ return `sh-${i}`; }
+function getV(k,max){ return Math.min(packed[k]||0, max); }
 
-function getVal(key,max){return Math.min(packed[key]||0,max);}
-
-function change(key,max,delta){
-  const cur=getVal(key,max);
-  packed[key]=Math.max(0,Math.min(max,cur+delta));
+function changePacked(k,max,d){
+  packed[k] = Math.max(0, Math.min(max, (packed[k]||0)+d));
   render();
 }
 
 function resetAll(){
   Object.keys(packed).forEach(k=>delete packed[k]);
-  render();
-}
-
-function personStats(pid){
-  const p=people.find(x=>x.id===pid);
-  let need=0,have=0;
-  p.cats.forEach((c,ci)=>c.items.forEach((it,ii)=>{
-    need+=it.n;
-    have+=getVal(pk(pid,ci,ii),it.n);
-  }));
-  return {need,have};
-}
-
-function sharedStats(){
-  let need=0,have=0;
-  sharedItems.forEach((it,i)=>{need+=it.n;have+=getVal(sk(i),it.n);});
-  return {need,have};
+  editingItem=null; addingCat=null; render();
 }
 
 function allStats(){
   let need=0,have=0;
-  people.forEach(p=>{const s=personStats(p.id);need+=s.need;have+=s.have;});
-  const s=sharedStats();need+=s.need;have+=s.have;
+  people.forEach(p=>p.cats.forEach((c,ci)=>c.items.forEach((it,ii)=>{need+=it.n;have+=getV(pk(p.id,ci,ii),it.n);})));
+  sharedItems.forEach((it,i)=>{need+=it.n;have+=getV(sk(i),it.n);});
   return {need,have};
 }
 
-function counterHTML(key,max,u){
-  const v=getVal(key,max);
-  const done=v>=max;
-  const partial=v>0&&!done;
-  const valClass=done?'done':partial?'partial':'';
-  const label=u?`${v}/${max} ${u}`:`${v} / ${max}`;
+function personStats(pid){
+  let need=0,have=0;
+  const p=people.find(x=>x.id===pid);
+  p.cats.forEach((c,ci)=>c.items.forEach((it,ii)=>{need+=it.n;have+=getV(pk(pid,ci,ii),it.n);}));
+  return {need,have};
+}
+
+function catStats(pid,ci){
+  const p=people.find(x=>x.id===pid);
+  let need=0,have=0;
+  p.cats[ci].items.forEach((it,ii)=>{need+=it.n;have+=getV(pk(pid,ci,ii),it.n);});
+  return {need,have};
+}
+
+function counter(k,max){
+  const v=getV(k,max);
+  const cls=v>=max?'complete':v>0?'partial':'';
   return `<div class="counter">
-    <button class="cbtn" onclick="change('${key}',${max},-1)" ${v<=0?'disabled':''} aria-label="decrease">−</button>
-    <div class="cval ${valClass}">${label}</div>
-    <button class="cbtn" onclick="change('${key}',${max},1)" ${v>=max?'disabled':''} aria-label="increase">+</button>
+    <button class="cbtn" onclick="changePacked('${k}',${max},-1)"${v<=0?' disabled':''}>−</button>
+    <div class="cnum ${cls}">${v}/${max}</div>
+    <button class="cbtn" onclick="changePacked('${k}',${max},1)"${v>=max?' disabled':''}>+</button>
   </div>`;
 }
 
-function renderSummary(){
-  const a=allStats();
-  const pct=a.need===0?0:Math.round(a.have/a.need*100);
-  let h=`<div class="stat"><div class="stat-n">${pct}%</div><div class="stat-l">Overall packed</div></div>`;
-  people.forEach(p=>{
-    const s=personStats(p.id);
-    const pp=s.need===0?0:Math.round(s.have/s.need*100);
-    h+=`<div class="stat"><div class="stat-n">${pp}%</div><div class="stat-l">${p.name}</div></div>`;
-  });
-  document.getElementById('summary').innerHTML=h;
+function saveEdit(pid,ci,ii){
+  const nameEl=document.getElementById('edit-name');
+  const numEl=document.getElementById('edit-num');
+  if(!nameEl||!numEl) return;
+  const p=people.find(x=>x.id===pid);
+  const item=p.cats[ci].items[ii];
+  const newName=nameEl.value.trim();
+  const newN=Math.max(1,parseInt(numEl.value)||1);
+  if(newName) item.l=newName;
+  item.n=newN;
+  const k=pk(pid,ci,ii);
+  if((packed[k]||0)>newN) packed[k]=newN;
+  editingItem=null; render();
+}
+
+function deleteItem(pid,ci,ii){
+  const p=people.find(x=>x.id===pid);
+  p.cats[ci].items.splice(ii,1);
+  editingItem=null; render();
+}
+
+function addItem(pid,ci){
+  const nameEl=document.getElementById('new-name');
+  const numEl=document.getElementById('new-num');
+  const destEl=document.getElementById('new-dest');
+  if(!nameEl||!numEl||!destEl) return;
+  const name=nameEl.value.trim();
+  if(!name) return;
+  const num=Math.max(1,parseInt(numEl.value)||1);
+  const dest=destEl.value;
+  const p=people.find(x=>x.id===pid);
+  p.cats[ci].items.push({l:name,n:num,d:dest});
+  addingCat=null; render();
+}
+
+function renderHero(){
+  const {need,have}=allStats();
+  const pct=need===0?0:Math.round(have/need*100);
+  const circ=138.2;
+  document.getElementById('ring-arc').style.strokeDashoffset=circ-(circ*pct/100);
+  document.getElementById('ring-pct').textContent=pct+'%';
+  const msg=pct===0?'Start packing!':pct===100?'All packed! ✓':pct<50?'Getting there…':'Almost done!';
+  document.getElementById('ring-title').textContent=msg;
+  document.getElementById('ring-desc').textContent=`${have} of ${need} items packed`;
 }
 
 function renderTabs(){
   let h='';
   people.forEach(p=>{
-    const s=personStats(p.id);
-    const pct=s.need===0?0:Math.round(s.have/s.need*100);
-    h+=`<button class="ptab${activePerson===p.id?' active':''}" onclick="switchPerson('${p.id}')">
-      ${p.name}<span class="ptab-prog">${pct}% packed</span>
+    const {need,have}=personStats(p.id);
+    const pct=need===0?0:Math.round(have/need*100);
+    h+=`<button class="ptab${active===p.id?' active':''}" onclick="switchP('${p.id}')">
+      <div class="ptab-inner">
+        <div class="ptab-name">${p.name}</div>
+        <div class="ptab-pct">${pct}%</div>
+        <div class="ptab-bar"><div class="ptab-bar-fill" style="width:${pct}%"></div></div>
+      </div>
     </button>`;
   });
   document.getElementById('tabs').innerHTML=h;
 }
 
 function renderPerson(){
-  const p=people.find(x=>x.id===activePerson);
+  const p=people.find(x=>x.id===active);
   let h='';
   p.cats.forEach((cat,ci)=>{
-    h+=`<div class="section"><div class="section-label">${cat.title}</div>`;
-    cat.items.forEach((item,ii)=>{
-      const key=pk(p.id,ci,ii);
-      const v=getVal(key,item.n);
-      const done=v>=item.n;
-      const missing=item.n-v;
-      h+=`<div class="item-row${done?' complete':''}">
-        <span class="dest-dot" style="background:${dotCol[item.d]}"></span>
-        <div class="item-name">${item.l}${item.u?`<small>needed: ${item.n} ${item.u}</small>`:`<small>needed: ${item.n}</small>`}</div>
-        ${!done&&v>0?`<span class="missing-badge">${missing} missing</span>`:''}
-        ${done?`<i class="ti ti-circle-check check-icon" aria-hidden="true"></i>`:''}
-        ${counterHTML(key,item.n,item.u||'')}
+    const meta=catMeta[cat.title]||defaultMeta;
+    const {need,have}=catStats(active,ci);
+    const destD=cat.items.length>0?cat.items[0].d:M;
+    const isAdding=addingCat===`${active}-${ci}`;
+    h+=`<div class="cat-card">
+      <div class="cat-head">
+        <div class="cat-head-left">
+          <div class="cat-icon" style="background:${meta.bg}">
+            <i class="ti ${meta.icon}" style="color:${meta.ic}"></i>
+          </div>
+          <div>
+            <div class="cat-name">${cat.title.replace('Clothing — ','')}</div>
+            <div class="cat-prog">${have}/${need} packed</div>
+          </div>
+        </div>
+        <span class="dest-chip ${chipCls[destD]}">${chipLbl[destD]}</span>
       </div>`;
+
+    cat.items.forEach((item,ii)=>{
+      const k=pk(active,ci,ii);
+      const v=getV(k,item.n);
+      const done=v>=item.n;
+      const isEditing=editingItem===`${active}-${ci}-${ii}`;
+
+      if(isEditing){
+        h+=`<div class="edit-row">
+          <input type="text" id="edit-name" value="${item.l}" placeholder="Item name"/>
+          <input type="number" id="edit-num" value="${item.n}" min="1" max="30"/>
+          <button class="save-btn" onclick="saveEdit('${active}',${ci},${ii})">Save</button>
+          <button class="cancel-btn" onclick="editingItem=null;render()"><i class="ti ti-x"></i></button>
+          <button class="icon-btn del-btn" onclick="deleteItem('${active}',${ci},${ii})" title="Delete"><i class="ti ti-trash"></i></button>
+        </div>`;
+      } else {
+        h+=`<div class="item-row${done?' done':''}">
+          <div class="item-left">
+            <span class="dest-dot" style="background:${dotCol[item.d]}"></span>
+            <div class="item-text">
+              <div class="item-name">${item.l}</div>
+              <div class="item-sub">Need ${item.n}${item.u?' '+item.u:''}</div>
+            </div>
+          </div>
+          <div class="item-right">
+            ${!done&&v>0?`<span class="missing-tag">${item.n-v} left</span>`:''}
+            ${done?`<i class="ti ti-circle-check done-icon"></i>`:''}
+            ${counter(k,item.n)}
+            <button class="icon-btn" onclick="editingItem='${active}-${ci}-${ii}';addingCat=null;render()" title="Edit">
+              <i class="ti ti-pencil"></i>
+            </button>
+          </div>
+        </div>`;
+      }
     });
-    h+='</div>';
+
+    if(isAdding){
+      h+=`<div class="add-form-row">
+        <div class="add-form-label">Add new item to this category</div>
+        <div class="add-form-inputs">
+          <input type="text" id="new-name" placeholder="Item name e.g. Extra tops"/>
+          <input type="number" id="new-num" value="1" min="1" max="30"/>
+          <select id="new-dest">
+            <option value="m">Mallorca</option>
+            <option value="s">San Seb</option>
+            <option value="b">Both</option>
+          </select>
+          <button class="save-btn" onclick="addItem('${active}',${ci})">Add</button>
+          <button class="cancel-btn" onclick="addingCat=null;render()"><i class="ti ti-x"></i></button>
+        </div>
+      </div>`;
+    } else {
+      h+=`<div class="add-btn-row">
+        <button class="add-item-btn" onclick="addingCat='${active}-${ci}';editingItem=null;render()">
+          <i class="ti ti-plus"></i> Add item
+        </button>
+      </div>`;
+    }
+
+    h+=`</div>`;
   });
   document.getElementById('person-content').innerHTML=h;
+  if(editingItem){ const el=document.getElementById('edit-name'); if(el) el.focus(); }
+  if(addingCat){  const el=document.getElementById('new-name');  if(el) el.focus(); }
 }
 
 function renderShared(){
   let h='';
   sharedItems.forEach((item,i)=>{
-    const key=sk(i);
-    const v=getVal(key,item.n);
+    const k=sk(i);
+    const v=getV(k,item.n);
     const done=v>=item.n;
-    const missing=item.n-v;
-    h+=`<div class="item-row${done?' complete':''}" style="padding:9px 4px;">
-      <span class="dest-dot" style="background:${dotCol[item.d]}"></span>
-      <div class="item-name">${item.l}${item.u?`<small>${item.n} ${item.u}</small>`:`<small>needed: ${item.n}</small>`}</div>
-      ${!done&&v>0?`<span class="missing-badge">${missing} missing</span>`:''}
-      ${done?`<i class="ti ti-circle-check check-icon" aria-hidden="true"></i>`:''}
-      ${counterHTML(key,item.n,item.u||'')}
+    h+=`<div class="shared-card${done?' done':''}">
+      <div class="shared-card-top">
+        <div class="shared-name">${item.l}</div>
+        <span class="shared-dot" style="background:${dotCol[item.d]}"></span>
+      </div>
+      <div class="shared-sub">Need ${item.n}${item.u?' '+item.u:''}</div>
+      <div class="shared-footer">
+        ${!done&&v>0?`<span class="shared-missing">${item.n-v} left</span>`:''}
+        ${done?`<i class="ti ti-circle-check shared-ok"></i>`:'<span></span>'}
+        ${counter(k,item.n)}
+      </div>
     </div>`;
   });
   document.getElementById('shared-grid').innerHTML=h;
 }
 
-function switchPerson(id){
-  activePerson=id;
-  render();
-}
-
-function render(){
-  renderSummary();
-  renderTabs();
-  renderPerson();
-  renderShared();
-}
-
+function switchP(id){ active=id; editingItem=null; addingCat=null; render(); }
+function render(){ renderHero(); renderTabs(); renderPerson(); renderShared(); }
 render();
 </script>
+</body>
+</html>
