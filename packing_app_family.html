@@ -1,0 +1,294 @@
+
+<h2 class="sr-only">Family packing app for three people with quantity counters per item showing how many are packed vs needed</h2>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+.app{padding:1.5rem 0 2rem;}
+.topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;flex-wrap:wrap;gap:8px;}
+.app-title{font-size:22px;font-weight:500;color:var(--color-text-primary);}
+.reset-btn{font-size:13px;color:var(--color-text-secondary);background:none;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);padding:5px 14px;cursor:pointer;}
+.reset-btn:hover{background:var(--color-background-secondary);}
+.summary-row{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:1.25rem;}
+.stat{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:10px 14px;}
+.stat-n{font-size:20px;font-weight:500;color:var(--color-text-primary);}
+.stat-l{font-size:11px;color:var(--color-text-secondary);margin-top:2px;}
+.legend{display:flex;gap:10px;margin-bottom:1.25rem;flex-wrap:wrap;}
+.dot-pill{display:flex;align-items:center;gap:5px;font-size:12px;color:var(--color-text-secondary);}
+.dot{width:7px;height:7px;border-radius:50%;display:inline-block;}
+.person-tabs{display:flex;gap:6px;margin-bottom:1.25rem;flex-wrap:wrap;}
+.ptab{padding:7px 18px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-secondary);background:transparent;font-size:14px;color:var(--color-text-secondary);cursor:pointer;}
+.ptab.active{background:var(--color-background-primary);border-color:var(--color-border-primary);color:var(--color-text-primary);font-weight:500;}
+.ptab:hover:not(.active){background:var(--color-background-secondary);}
+.ptab-prog{display:block;font-size:11px;color:var(--color-text-secondary);font-weight:400;margin-top:2px;}
+.section{margin-bottom:1.25rem;}
+.section-label{font-size:11px;color:var(--color-text-secondary);letter-spacing:.04em;padding:6px 0 6px;border-bottom:0.5px solid var(--color-border-tertiary);margin-bottom:2px;}
+.item-row{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:0.5px solid var(--color-border-tertiary);}
+.item-row.complete .item-name{color:var(--color-text-secondary);}
+.dest-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+.item-name{font-size:14px;color:var(--color-text-primary);flex:1;line-height:1.3;}
+.item-name small{display:block;font-size:11px;color:var(--color-text-secondary);margin-top:1px;}
+.counter{display:flex;align-items:center;gap:0;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);overflow:hidden;flex-shrink:0;}
+.cbtn{width:30px;height:30px;background:none;border:none;font-size:16px;color:var(--color-text-secondary);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .1s;}
+.cbtn:hover{background:var(--color-background-secondary);}
+.cbtn:disabled{opacity:.3;cursor:default;}
+.cval{min-width:52px;text-align:center;font-size:13px;color:var(--color-text-primary);border-left:0.5px solid var(--color-border-tertiary);border-right:0.5px solid var(--color-border-tertiary);height:30px;display:flex;align-items:center;justify-content:center;gap:3px;}
+.cval.done{color:#0F6E56;font-weight:500;}
+.cval.partial{color:#BA7517;}
+.missing-badge{font-size:11px;padding:2px 7px;border-radius:20px;background:#FAECE7;color:#993C1D;flex-shrink:0;}
+.check-icon{color:#1D9E75;font-size:16px;flex-shrink:0;}
+.shared-divider{font-size:14px;font-weight:500;color:var(--color-text-primary);margin:1.5rem 0 .75rem;padding-top:1rem;border-top:0.5px solid var(--color-border-tertiary);}
+.shared-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:2px;}
+</style>
+
+<div class="app">
+<div class="topbar">
+  <div class="app-title">Family packing — 3 weeks</div>
+  <button class="reset-btn" onclick="resetAll()">Reset all</button>
+</div>
+
+<div class="summary-row" id="summary"></div>
+
+<div class="legend">
+  <div class="dot-pill"><span class="dot" style="background:#1D9E75"></span>Mallorca</div>
+  <div class="dot-pill"><span class="dot" style="background:#378ADD"></span>San Sebastián add-on</div>
+  <div class="dot-pill"><span class="dot" style="background:#7F77DD"></span>Both</div>
+</div>
+
+<div class="person-tabs" id="tabs"></div>
+<div id="person-content"></div>
+
+<div class="shared-divider">Shared family items</div>
+<div class="shared-grid" id="shared-grid"></div>
+</div>
+
+<script>
+const M='m',S='s',B='b';
+const dotCol={m:'#1D9E75',s:'#378ADD',b:'#7F77DD'};
+
+const people=[
+  {id:'adult',name:'You',sub:'adult',
+    cats:[
+      {title:'Clothing — Mallorca',items:[
+        {l:'Linen / cotton tops',n:6,d:M},
+        {l:'Shorts',n:3,d:M},
+        {l:'Light dress or linen trousers',n:2,d:M},
+        {l:'Swimsuits',n:3,d:M},
+        {l:'Light sarong / cover-up',n:1,d:M},
+        {l:'Flip flops / sandals',n:1,u:'pair',d:M},
+        {l:'Walking shoes',n:1,u:'pair',d:M},
+        {l:'Wide-brim sun hat',n:1,d:M},
+        {l:'Sunglasses',n:1,d:M},
+      ]},
+      {title:'Clothing — San Sebastián add-ons',items:[
+        {l:'Light jacket or cardigan',n:1,d:S},
+        {l:'Long-sleeve top or knit',n:2,d:S},
+        {l:'Long trousers / jeans',n:1,d:S},
+        {l:'Compact umbrella',n:1,d:S},
+      ]},
+      {title:'Underwear & sleep',items:[
+        {l:'Underwear',n:9,d:B},
+        {l:'Socks',n:5,u:'pairs',d:B},
+        {l:'Pyjamas',n:2,d:B},
+      ]},
+    ]
+  },
+  {id:'k10',name:'10-year-old',sub:'active & outdoors',
+    cats:[
+      {title:'Clothing — Mallorca',items:[
+        {l:'T-shirts (light fabric)',n:6,d:M},
+        {l:'Shorts',n:3,d:M},
+        {l:'Swimsuits',n:4,d:M},
+        {l:'UV rash guard',n:2,d:M},
+        {l:'Water sandals',n:1,u:'pair',d:M},
+        {l:'Trainers / sneakers',n:1,u:'pair',d:M},
+        {l:'Cap or sun hat',n:1,d:M},
+      ]},
+      {title:'Clothing — San Sebastián add-ons',items:[
+        {l:'Light hoodie or sweatshirt',n:1,d:S},
+        {l:'Long-sleeve tee',n:1,d:S},
+        {l:'Joggers or light long pants',n:1,d:S},
+      ]},
+      {title:'Underwear & sleep',items:[
+        {l:'Underwear',n:9,d:B},
+        {l:'Socks',n:7,u:'pairs',d:B},
+        {l:'Pyjamas',n:2,d:B},
+      ]},
+    ]
+  },
+  {id:'k4',name:'4-year-old',sub:'pack extras for spills',
+    cats:[
+      {title:'Clothing — Mallorca',items:[
+        {l:'T-shirts (light)',n:7,d:M},
+        {l:'Shorts',n:4,d:M},
+        {l:'Swimsuits',n:5,d:M},
+        {l:'UV rash guard',n:2,d:M},
+        {l:'Water sandals',n:1,u:'pair',d:M},
+        {l:'Crocs or easy shoes',n:1,u:'pair',d:M},
+        {l:'Sun hat with strap',n:2,d:M},
+      ]},
+      {title:'Clothing — San Sebastián add-ons',items:[
+        {l:'Zip fleece or hoodie',n:1,d:S},
+        {l:'Long-sleeve top',n:1,d:S},
+        {l:'Leggings or soft joggers',n:1,d:S},
+      ]},
+      {title:'Underwear & sleep',items:[
+        {l:'Underwear',n:10,d:B},
+        {l:'Socks',n:8,u:'pairs',d:B},
+        {l:'Pyjamas',n:3,d:B},
+      ]},
+    ]
+  }
+];
+
+const sharedItems=[
+  {l:'High-SPF sunscreen',n:3,u:'bottles',d:M},
+  {l:'After-sun / aloe gel',n:1,d:M},
+  {l:'Swim goggles',n:2,d:M},
+  {l:'Armbands / floats (4yo)',n:1,u:'set',d:M},
+  {l:'Insect repellent',n:1,d:B},
+  {l:'Kids paracetamol & ibuprofen',n:2,u:'bottles',d:B},
+  {l:'Anti-histamine',n:1,d:B},
+  {l:'Basic first-aid kit',n:1,d:B},
+  {l:'Passports & documents',n:3,d:B},
+  {l:'EHIC / insurance cards',n:1,u:'set',d:B},
+  {l:'EU plug adapters',n:2,d:B},
+  {l:'Power bank',n:1,d:B},
+  {l:'Reusable water bottles',n:3,d:B},
+  {l:'Beach bag',n:1,d:M},
+  {l:'Laundry detergent sachets',n:5,d:B},
+  {l:'Tablets / entertainment',n:2,d:B},
+];
+
+const packed={};
+let activePerson='adult';
+
+function pk(pid,ci,ii){return pid+'-'+ci+'-'+ii;}
+function sk(i){return 'sh-'+i;}
+
+function getVal(key,max){return Math.min(packed[key]||0,max);}
+
+function change(key,max,delta){
+  const cur=getVal(key,max);
+  packed[key]=Math.max(0,Math.min(max,cur+delta));
+  render();
+}
+
+function resetAll(){
+  Object.keys(packed).forEach(k=>delete packed[k]);
+  render();
+}
+
+function personStats(pid){
+  const p=people.find(x=>x.id===pid);
+  let need=0,have=0;
+  p.cats.forEach((c,ci)=>c.items.forEach((it,ii)=>{
+    need+=it.n;
+    have+=getVal(pk(pid,ci,ii),it.n);
+  }));
+  return {need,have};
+}
+
+function sharedStats(){
+  let need=0,have=0;
+  sharedItems.forEach((it,i)=>{need+=it.n;have+=getVal(sk(i),it.n);});
+  return {need,have};
+}
+
+function allStats(){
+  let need=0,have=0;
+  people.forEach(p=>{const s=personStats(p.id);need+=s.need;have+=s.have;});
+  const s=sharedStats();need+=s.need;have+=s.have;
+  return {need,have};
+}
+
+function counterHTML(key,max,u){
+  const v=getVal(key,max);
+  const done=v>=max;
+  const partial=v>0&&!done;
+  const valClass=done?'done':partial?'partial':'';
+  const label=u?`${v}/${max} ${u}`:`${v} / ${max}`;
+  return `<div class="counter">
+    <button class="cbtn" onclick="change('${key}',${max},-1)" ${v<=0?'disabled':''} aria-label="decrease">−</button>
+    <div class="cval ${valClass}">${label}</div>
+    <button class="cbtn" onclick="change('${key}',${max},1)" ${v>=max?'disabled':''} aria-label="increase">+</button>
+  </div>`;
+}
+
+function renderSummary(){
+  const a=allStats();
+  const pct=a.need===0?0:Math.round(a.have/a.need*100);
+  let h=`<div class="stat"><div class="stat-n">${pct}%</div><div class="stat-l">Overall packed</div></div>`;
+  people.forEach(p=>{
+    const s=personStats(p.id);
+    const pp=s.need===0?0:Math.round(s.have/s.need*100);
+    h+=`<div class="stat"><div class="stat-n">${pp}%</div><div class="stat-l">${p.name}</div></div>`;
+  });
+  document.getElementById('summary').innerHTML=h;
+}
+
+function renderTabs(){
+  let h='';
+  people.forEach(p=>{
+    const s=personStats(p.id);
+    const pct=s.need===0?0:Math.round(s.have/s.need*100);
+    h+=`<button class="ptab${activePerson===p.id?' active':''}" onclick="switchPerson('${p.id}')">
+      ${p.name}<span class="ptab-prog">${pct}% packed</span>
+    </button>`;
+  });
+  document.getElementById('tabs').innerHTML=h;
+}
+
+function renderPerson(){
+  const p=people.find(x=>x.id===activePerson);
+  let h='';
+  p.cats.forEach((cat,ci)=>{
+    h+=`<div class="section"><div class="section-label">${cat.title}</div>`;
+    cat.items.forEach((item,ii)=>{
+      const key=pk(p.id,ci,ii);
+      const v=getVal(key,item.n);
+      const done=v>=item.n;
+      const missing=item.n-v;
+      h+=`<div class="item-row${done?' complete':''}">
+        <span class="dest-dot" style="background:${dotCol[item.d]}"></span>
+        <div class="item-name">${item.l}${item.u?`<small>needed: ${item.n} ${item.u}</small>`:`<small>needed: ${item.n}</small>`}</div>
+        ${!done&&v>0?`<span class="missing-badge">${missing} missing</span>`:''}
+        ${done?`<i class="ti ti-circle-check check-icon" aria-hidden="true"></i>`:''}
+        ${counterHTML(key,item.n,item.u||'')}
+      </div>`;
+    });
+    h+='</div>';
+  });
+  document.getElementById('person-content').innerHTML=h;
+}
+
+function renderShared(){
+  let h='';
+  sharedItems.forEach((item,i)=>{
+    const key=sk(i);
+    const v=getVal(key,item.n);
+    const done=v>=item.n;
+    const missing=item.n-v;
+    h+=`<div class="item-row${done?' complete':''}" style="padding:9px 4px;">
+      <span class="dest-dot" style="background:${dotCol[item.d]}"></span>
+      <div class="item-name">${item.l}${item.u?`<small>${item.n} ${item.u}</small>`:`<small>needed: ${item.n}</small>`}</div>
+      ${!done&&v>0?`<span class="missing-badge">${missing} missing</span>`:''}
+      ${done?`<i class="ti ti-circle-check check-icon" aria-hidden="true"></i>`:''}
+      ${counterHTML(key,item.n,item.u||'')}
+    </div>`;
+  });
+  document.getElementById('shared-grid').innerHTML=h;
+}
+
+function switchPerson(id){
+  activePerson=id;
+  render();
+}
+
+function render(){
+  renderSummary();
+  renderTabs();
+  renderPerson();
+  renderShared();
+}
+
+render();
+</script>
